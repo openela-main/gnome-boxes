@@ -1,0 +1,25 @@
+From 932e84eff38302ff7c6b89213a911589cbb06bfe Mon Sep 17 00:00:00 2001
+From: Felipe Borges <felipeborges@gnome.org>
+Date: Mon, 13 Jul 2020 10:54:41 +0200
+Subject: [PATCH] disable-3d-acceleration
+
+---
+ src/libvirt-machine-properties.vala | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/libvirt-machine-properties.vala b/src/libvirt-machine-properties.vala
+index 5f5392e3..aa69fc85 100644
+--- a/src/libvirt-machine-properties.vala
++++ b/src/libvirt-machine-properties.vala
+@@ -116,7 +116,7 @@ public string collect_logs () {
+                     add_string_property (ref list, _("Display URL"), machine.display.uri);
+             }
+ 
+-            add_3d_acceleration_property (ref list);
++            //add_3d_acceleration_property (ref list);
+ 
+             break;
+ 
+-- 
+2.26.2
+

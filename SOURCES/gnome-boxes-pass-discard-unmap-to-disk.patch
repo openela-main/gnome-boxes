@@ -1,0 +1,51 @@
+From 780525f32851c0daaf4250dc734ba73d1571c1c1 Mon Sep 17 00:00:00 2001
+From: Felipe Borges <felipeborges@gnome.org>
+Date: Mon, 2 Nov 2020 15:35:36 +0100
+Subject: [PATCH] vm-configurator: Pass discard "unmap" to virtio-blk disks
+
+Ever since QEMU 4.0, virtio-blk disks have discard support[0]. For
+this reason, we don't need to migrate to virtio-scsi[1] to benefit from
+discard support.
+
+See also https://chrisirwin.ca/posts/discard-with-kvm-2020/
+
+[0] https://bugzilla.redhat.com/1672680
+[1] https://bugzilla.redhat.com/1152037
+
+Fixes #35
+---
+ src/vm-configurator.vala | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
+
+diff --git a/src/vm-configurator.vala b/src/vm-configurator.vala
+index ee8cf133..f2a50bb8 100644
+--- a/src/vm-configurator.vala
++++ b/src/vm-configurator.vala
+@@ -343,16 +343,21 @@ public static void set_target_media_config (Domain         domain,
+         var disk = new DomainDisk ();
+         disk.set_type (DomainDiskType.FILE);
+         disk.set_guest_device_type (DomainDiskGuestDeviceType.DISK);
+-        disk.set_driver_name ("qemu");
+-        disk.set_driver_format (DomainDiskFormat.QCOW2);
+         disk.set_source (target_path);
+-        disk.set_driver_cache (DomainDiskCacheType.WRITEBACK);
++
++        var driver = new DomainDiskDriver ();
++        driver.set_name ("qemu");
++        driver.set_format (DomainDiskFormat.QCOW2);
++        driver.set_cache (DomainDiskCacheType.WRITEBACK);
++        disk.set_driver (driver);
+ 
+         var dev_letter_str = ((char) (dev_index + 97)).to_string ();
+         if (install_media.supports_virtio_disk || install_media.supports_virtio1_disk) {
+             debug ("Using virtio controller for the main disk");
+             disk.set_target_bus (DomainDiskBus.VIRTIO);
+             disk.set_target_dev ("vd" + dev_letter_str);
++
++            driver.set_discard (DomainDiskDriverDiscard.UNMAP);
+         } else {
+             if (install_media.prefers_q35) {
+                 debug ("Using SATA controller for the main disk");
+-- 
+2.26.2
+

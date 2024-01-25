@@ -1,0 +1,77 @@
+From a9e6da0a18db07b94af30ced5e8c8b56737c9408 Mon Sep 17 00:00:00 2001
+From: Felipe Borges <felipeborges@gnome.org>
+Date: Wed, 8 Jul 2020 16:56:02 +0200
+Subject: [PATCH] machine: Prevent displays from overlapping each other
+
+When a machine display get connected/disconnected, we need to account
+for what's the current_item being shown and only perform the widget
+replacement when the current_item is the one that received those
+signals.
+
+This is not an ideal solution if we later decide to support multiple
+monitors, but it fixes various issues users have now with managing
+multiple machines at the same time.
+
+To reproduce the most common of these issues you need:
+1. Run at least two VMs simultaneously
+2. Restart one VM
+3. Jump to another VM
+4. See the restarting VM take over the display (replacing the
+current one).
+---
+ src/machine.vala | 16 +++++++++++-----
+ 1 file changed, 11 insertions(+), 5 deletions(-)
+
+diff --git a/src/machine.vala b/src/machine.vala
+index 795058f2..7526bdd3 100644
+--- a/src/machine.vala
++++ b/src/machine.vala
+@@ -161,6 +161,7 @@ protected void show_display () {
+             var widget = display.get_display (0);
+             widget_remove (widget);
+             window.display_page.show_display (display, widget);
++            window.topbar.status = this.name;
+             widget.grab_focus ();
+ 
+             store_auth_credentials ();
+@@ -203,10 +204,13 @@ protected void show_display () {
+             // Translators: The %s will be expanded with the name of the vm
+             window.topbar.status = _("Connecting to %s").printf (name);
+ 
+-            show_id = _display.show.connect ((id) => { show_display (); });
++            show_id = _display.show.connect ((id) => {
++                if (window != null && window.current_item == this)
++                    show_display ();
++            });
+ 
+             hide_id = _display.hide.connect ((id) => {
+-                if (window != null)
++                if (window != null && window.current_item == this)
+                     window.display_page.remove_display ();
+             });
+ 
+@@ -235,8 +239,9 @@ protected void show_display () {
+                 }
+ 
+                 load_screenshot ();
+-
+-                disconnect_display ();
++		if (!stay_on_display) {
++                    disconnect_display ();
++                }
+             });
+ 
+             need_password_id = _display.notify["need-password"].connect (handle_auth);
+@@ -402,7 +407,8 @@ public virtual void disconnect_display () {
+             }
+         }
+ 
+-        window.display_page.remove_display ();
++        if (window.current_item == this)
++            window.display_page.remove_display ();
+         if (!display.should_keep_alive ()) {
+             display.disconnect_it ();
+             display = null;
+-- 
+2.28.0
+

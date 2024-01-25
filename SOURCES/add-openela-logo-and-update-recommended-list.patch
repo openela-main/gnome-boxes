@@ -1,0 +1,35 @@
+diff -urN gnome-boxes-3.36.5-orig/data/osinfo/meson.build gnome-boxes-3.36.5-mod/data/osinfo/meson.build
+--- gnome-boxes-3.36.5-orig/data/osinfo/meson.build	2020-06-11 04:28:51.000000000 -0500
++++ gnome-boxes-3.36.5-mod/data/osinfo/meson.build	2021-10-16 23:00:35.466234054 -0500
+@@ -13,6 +13,7 @@
+   ['rhel-6.0.xml', 'gnome-boxes/osinfo/os/redhat.com'],
+   ['rhel-7.0.xml', 'gnome-boxes/osinfo/os/redhat.com'],
+   ['rhel-8.0.xml', 'gnome-boxes/osinfo/os/redhat.com'],
++  ['openela-8.6.xml', 'gnome-boxes/osinfo/os/openela.org'],
+   ['silverblue-28.xml', 'gnome-boxes/osinfo/os/fedoraproject.org']
+ ]
+ 
+diff -urN gnome-boxes-3.36.5-orig/data/osinfo/openela-8.6.xml gnome-boxes-3.36.5-mod/data/osinfo/openela-8.6.xml
+--- gnome-boxes-3.36.5-orig/data/osinfo/openela-8.6.xml	1969-12-31 19:00:00.000000000 -0500
++++ gnome-boxes-3.36.5-mod/data/osinfo/openela-8.6.xml	2022-05-11 22:45:00.242539682 -0500
+@@ -0,0 +1,9 @@
++<libosinfo version="0.0.1">
++
++  <!-- Please read README.logos for any questions about usage of product logos in Boxes. !-->
++
++  <os id="http://openela.org/openela/8.6">
++    <logo>https://gitlab.gnome.org/GNOME/gnome-boxes-logos/-/raw/master/logos/openelalinux.svg</logo>
++  </os>
++
++</libosinfo>
+diff -urN gnome-boxes-3.36.5-orig/data/recommended-downloads.xml gnome-boxes-3.36.5-mod/data/recommended-downloads.xml
+--- gnome-boxes-3.36.5-orig/data/recommended-downloads.xml	2020-06-11 04:28:51.000000000 -0500
++++ gnome-boxes-3.36.5-mod/data/recommended-downloads.xml	2021-10-16 23:04:14.306517123 -0500
+@@ -9,6 +9,7 @@
+   available.
+  -->
+ <list>
++  <os_id>http://openela.org/openela/8.6</os_id>
+   <os_id>http://redhat.com/rhel/8.2</os_id>
+   <os_id>http://fedoraproject.org/fedora/32</os_id>
+   <os_id>http://fedoraproject.org/silverblue/32</os_id>

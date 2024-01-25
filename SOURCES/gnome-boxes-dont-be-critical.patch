@@ -1,0 +1,29 @@
+From 1de7984024732d18450cfba96b4975b98c885167 Mon Sep 17 00:00:00 2001
+From: Felipe Borges <felipeborges@gnome.org>
+Date: Tue, 30 Jun 2020 12:49:22 +0200
+Subject: [PATCH] WIP
+
+---
+ src/wizard-source.vala | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/src/wizard-source.vala b/src/wizard-source.vala
+index b596741e..ab2ea37c 100644
+--- a/src/wizard-source.vala
++++ b/src/wizard-source.vala
+@@ -91,8 +91,10 @@ public WizardDownloadableEntry (Osinfo.Media media) {
+ 
+         url = media.url;
+ 
+-        var media_file = GLib.File.new_for_uri (media.url);
+-        set_tooltip_text (media_file.get_basename ());
++        if (media.url != null) {
++            var media_file = GLib.File.new_for_uri (media.url);
++            set_tooltip_text (media_file.get_basename ());
++        }
+     }
+ 
+     public WizardDownloadableEntry.from_os (Osinfo.Os os) {
+-- 
+2.26.2
+

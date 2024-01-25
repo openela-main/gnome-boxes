@@ -1,0 +1,49 @@
+From 376baa1bdfe2dfbe9f4973b33465fa35c102c086 Mon Sep 17 00:00:00 2001
+From: Felipe Borges
+ <feborges@ibm-p8-kvm-03-guest-02.virt.pnr.lab.eng.rdu2.redhat.com>
+Date: Mon, 10 Aug 2020 14:42:22 +0200
+Subject: [PATCH] downloads-page: Start URL download on ENTER (activate)
+
+---
+ src/assistant/downloads-page.vala | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
+
+diff --git a/src/assistant/downloads-page.vala b/src/assistant/downloads-page.vala
+index 98086cee..5be638a0 100644
+--- a/src/assistant/downloads-page.vala
++++ b/src/assistant/downloads-page.vala
+@@ -50,6 +50,7 @@
+ 
+         // TODO: move this into a UI file
+         search_entry.search_changed.connect (on_search_changed);
++        search_entry.activate.connect (on_search_activated);
+         search_entry.width_chars = 50;
+         search_entry.can_focus = true;
+         search_entry.placeholder_text = _("Search for an OS or enter a download link…");
+@@ -103,6 +104,14 @@ private void on_show_more_button_clicked () {
+     private void on_search_changed () {
+         var text = search_entry.get_text ();
+ 
++        if (text == null)
++            return;
++
++        search.text = text;
++    }
++
++    private void on_search_activated () {
++        var text = search_entry.get_text ();
+         if (text == null)
+             return;
+ 
+@@ -113,8 +122,6 @@ private void on_search_changed () {
+             url_entered ();
+             return;
+         }
+-
+-        search.text = text;
+     }
+ 
+     [GtkCallback]
+-- 
+2.26.2
+
